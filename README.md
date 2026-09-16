@@ -5,6 +5,8 @@
 [![AWS Fargate](https://img.shields.io/badge/Compute-AWS%20ECS%20Fargate-FF9900?style=flat-square&logo=amazonecs)](https://aws.amazon.com/fargate/)
 [![PostgreSQL](https://img.shields.io/badge/Database-Amazon%20RDS%20Postgres-4169E1?style=flat-square&logo=postgresql)](https://aws.amazon.com/rds/)
 
+This repository demonstrates end-to-end **Infrastructure as Code (IaC)**, **automated CI/CD workflows**, **least-privilege security design**, and **automated self-healing compute systems**.
+
 ---
 
 ## Architecture & Topology
@@ -106,7 +108,16 @@ Automated deployments trigger on every push to `main`. The pipeline performs:
 │   └── outputs.tf       # ALB DNS name & resource outputs
 └── performance/         # Apache JMeter test plans (.jmx)
 ```
+---
 
+## Cost Considerations
+
+The infrastructure was deployed temporarily for development and validation and
+was destroyed after testing to avoid unnecessary AWS charges.
+
+The architecture also avoided a NAT Gateway for ECS workloads, reducing
+networking costs while maintaining restricted application ingress through
+Security Groups.
 
 
 
