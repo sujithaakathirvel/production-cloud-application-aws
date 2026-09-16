@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud App 💭 </title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #94a3b8;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .box {
+            margin: 30px auto;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #334155;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        li:hover {
+            background: #475569;
+        }
+
+        .empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .count {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1> Cloud Task Manager</h1>
+<p> API is alive and running </p>
+
+<button onclick="loadTasks()">Load Tasks</button>
+
+<div class="box" id="tasks">
+    <p class="empty">Click the button to load tasks</p>
+</div>
+
+<script>
+    async function loadTasks() {
+        const res = await fetch('/tasks');
+        const data = await res.json();
+
+        let html = "";
+
+        if (data.tasks.length === 0) {
+            html = "<p class='empty'>No tasks yet </p>";
+        } else {
+            html = "<ul>";
+            data.tasks.forEach(task => {
+                html += `<li>✅ ${task.task}</li>`;
+            });
+            html += "</ul>";
+            html += `<div class="count">Total: ${data.total_tasks} tasks</div>`;
+        }
+
+        document.getElementById('tasks').innerHTML = html;
+    }
+</script>
+
+</body>
+</html>

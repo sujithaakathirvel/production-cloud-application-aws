@@ -1,0 +1,21 @@
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Python
+__pycache__/
+venv/
+
+# Docker
+*.log
+
+
+# JMeter
+performance/results.jtl
+performance/report/

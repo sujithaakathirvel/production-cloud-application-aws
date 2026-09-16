@@ -1,0 +1,87 @@
+name: Deploy to ECS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Set Image Tag
+      run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v6
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        mask-password: true
+
+    - name: Build Docker Image
+      run: docker build -t app ./app
+
+    - name: Tag Image
+      run: |
+        docker tag app:latest ${{ steps.login-ecr.outputs.registry }}/cloud-task-manager:${{ env.TAG }}
+
+    - name: Push Image
+      run: |
+        docker push ${{ steps.login-ecr.outputs.registry }}/cloud-task-manager:${{ env.TAG }}
+
+    #  GET CURRENT TASK DEFINITION
+    - name: Get current task definition
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition cloud-task \
+          --query taskDefinition > task-def.json
+
+    #  INSTALL jq
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+
+    #  CLEAN TASK DEFINITION (REMOVE INVALID FIELDS)
+    - name: Clean task definition
+      run: |
+        cat task-def.json | jq '{
+          family: .family,
+          networkMode: .networkMode,
+          requiresCompatibilities: .requiresCompatibilities,
+          cpu: .cpu,
+          memory: .memory,
+          executionRoleArn: .executionRoleArn,
+          containerDefinitions: .containerDefinitions
+        }' > clean-task-def.json
+
+    #  UPDATE IMAGE TAG
+    - name: Update image in task definition
+      run: |
+        jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/cloud-task-manager:${{ env.TAG }}" \
+        '.containerDefinitions[0].image = $IMAGE' \
+        clean-task-def.json > new-task-def.json
+
+    #  REGISTER NEW TASK DEF
+    - name: Register new task definition
+      run: |
+        aws ecs register-task-definition \
+          --cli-input-json file://new-task-def.json
+
+    #  DEPLOY
+    - name: Deploy new task definition
+      run: |
+        aws ecs update-service \
+          --cluster cloud-cluster \
+          --service cloud-service \
+          --force-new-deployment \
+          --region eu-west-2
+
+          
