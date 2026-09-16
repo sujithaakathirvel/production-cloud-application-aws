@@ -1,4 +1,4 @@
-# Production-Grade AWS Cloud Infrastructure with Terraform & CI/CD
+# Production-Style AWS Cloud Infrastructure with Terraform & CI/CD
 
 [![CI/CD](https://github.com/sujithaakathirvel/production-cloud-application-aws/actions/workflows/deploy.yml/badge.svg)](https://github.com/sujithaakathirvel/production-cloud-application-aws/actions)
 [![Terraform](https://img.shields.io/badge/IaC-Terraform-7B42BC?style=flat-square&logo=terraform)](https://www.terraform.io/)
@@ -21,7 +21,7 @@ The application runs inside an AWS VPC across two Availability Zones.
 
 * **Network Segmentation & Least-Privilege Ingress:** RDS PostgreSQL is non-public (`publicly_accessible = false`) and accepts traffic only from the ECS task security group, on port `5432`.
 
-* **Cost-Aware Architecture Design:** ECS tasks run in public subnets with public IPs to avoid NAT Gateway costs, while Security Groups strip all public internet ingress at Layer 4/7 — preserving production-grade isolation without the added expense.
+* **Cost-Aware Architecture Design:** ECS tasks run in public subnets with public IPs to avoid NAT Gateway costs, while Security Groups strip all public internet ingress at Layer 4/7 - providing layered network isolation without the additional NAT Gateway cost.
 
 ---
 
@@ -29,7 +29,7 @@ The application runs inside an AWS VPC across two Availability Zones.
 
 | Engineering Focus | Business Challenge Addressed | Technical Implementation |
 | :--- | :--- | :--- |
-| **Infrastructure as Code** | Eliminates manual console setup, human error, and environment drift. | Modular **Terraform** configuration provisioning the full stack — VPC, ECS, RDS, IAM — as reproducible code. |
+| **Infrastructure as Code** | Eliminates manual console setup, human error, and environment drift. | Modular **Terraform** configuration provisioning - VPC, ECS, RDS, IAM — as reproducible code. |
 | **Automated CI/CD Pipeline** | Slow release cycles and manual deployment risks. | **GitHub Actions** pipeline building Docker images, pushing to **Amazon ECR**, and deploying to ECS in **43 seconds**. |
 | **Credential Hardening** | Prevents source code credential leaks and hardcoded secrets. | Runtime DB credentials injected dynamically via **AWS Secrets Manager** and **IAM Task Execution Roles**, eliminating static passwords in code or environment files. |
 | **High Availability & Healing** | Mitigates application crash and server failure risks. | ECS Service auto-recovery tested via task termination — replacement task reached Running, registered with the ALB, and passed health checks automatically. |
@@ -39,7 +39,7 @@ The application runs inside an AWS VPC across two Availability Zones.
 
 * **Cloud Provider:** AWS (VPC, ALB, ECS Fargate, ECR, RDS PostgreSQL, Secrets Manager, CloudWatch, IAM)
 * **Infrastructure as Code:** Terraform
-* **Application & Runtime:** Python 3.x, Flask, Gunicorn, PostgreSQL
+* **Application & Runtime:** Python 3.x, Flask, PostgreSQL
 * **Containerisation & CI/CD:** Docker, GitHub Actions
 * **Observability & Testing:** AWS CloudWatch Logs, Apache JMeter
 
