@@ -5,6 +5,8 @@
 [![AWS Fargate](https://img.shields.io/badge/Compute-AWS%20ECS%20Fargate-FF9900?style=flat-square&logo=amazonecs)](https://aws.amazon.com/fargate/)
 [![PostgreSQL](https://img.shields.io/badge/Database-Amazon%20RDS%20Postgres-4169E1?style=flat-square&logo=postgresql)](https://aws.amazon.com/rds/)
 
+A production-style Flask application deployed on AWS ECS Fargate, provisioned entirely with Terraform and deployed through an automated GitHub Actions pipeline.
+
 This repository demonstrates end-to-end **Infrastructure as Code (IaC)**, **automated CI/CD workflows**, **least-privilege security design**, and **automated self-healing compute systems**.
 
 ---
@@ -23,7 +25,7 @@ The application runs inside an AWS VPC across two Availability Zones.
 
 * **Network Segmentation & Least-Privilege Ingress:** RDS PostgreSQL is non-public (`publicly_accessible = false`) and accepts traffic only from the ECS task security group, on port `5432`.
 
-* **Cost-Aware Architecture Design:** ECS tasks run in public subnets with public IPs to avoid NAT Gateway costs, while Security Groups strip all public internet ingress at Layer 4/7 - providing layered network isolation without the additional NAT Gateway cost.
+* **Cost-Aware Architecture Design:** ECS tasks run in public subnets with public IPs to avoid NAT Gateway costs, while Security Groups restrict direct application ingress to the ALB, while the ALB handles public HTTP traffic.
 
 ---
 
@@ -80,9 +82,9 @@ terraform init
 terraform plan
 terraform apply
 ```
-## 2. CI/CD Pipeline Execution
+### 2. CI/CD Pipeline Execution
 
-Automated deployments trigger on every push to `main`. The pipeline performs:
+Deployments are triggered manually through the GitHub Actions workflow.
 
 1. Repository checkout and AWS authentication using GitHub Actions secrets (AWS access key/secret).
 2. Building and tagging the container image with the Git commit SHA (`${GITHUB_SHA::7}`).
@@ -118,110 +120,6 @@ was destroyed after testing to avoid unnecessary AWS charges.
 The architecture also avoided a NAT Gateway for ECS workloads, reducing
 networking costs while maintaining restricted application ingress through
 Security Groups.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
